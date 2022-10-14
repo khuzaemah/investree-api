@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Category;
+use Validator;
 
 class CategoryController extends Controller
 {
@@ -14,7 +16,12 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $category = Category::all();
+        return response()->json([
+            "success" => true,
+            "message" => "Article List",
+            "data" => $category
+        ]);
     }
 
     /**
@@ -35,7 +42,22 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->all();
+        $validator = Validator::make($input, [
+            'name' => 'required', 
+            'user_id' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error', $validator->error());
+        }
+
+        $category = Category::create($input);
+        return response()->json([
+            "success" => true,
+            "message" => "Category created successfully.",
+            "data" => $category
+        ]);
     }
 
     /**
@@ -46,7 +68,16 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        //
+        $category = Category::find($id);
+        if(empty($category)){
+            return $this->sendError("Category not found");
+        }
+
+        return response()->json([
+            "success" => true,
+            "message" => "Category retrieved successfully",
+            "data" => $category
+        ]);
     }
 
     /**
@@ -67,9 +98,28 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Category $category)
     {
-        //
+        $input = $request->all();
+        $validator = Validator::make($input, [
+            'name' => 'required',
+            'user_id' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Validator Error.', $validator->error());
+        }
+
+        $category->name = $input['name'];
+        $category->user_id = $input['user_id'];
+        $category->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => "Category update successfully",
+            'data' => $category
+        ]);
+
     }
 
     /**
@@ -78,8 +128,13 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Category $category)
     {
-        //
+        $category->delete();
+        return response()->json([
+            "success" => true,
+            "message" => "Category deleted successfully",
+            "data" => $category
+        ]);
     }
 }
