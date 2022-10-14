@@ -25,6 +25,6 @@ Route::middleware('auth:api')->group(function () {
     Route::post('user-detail', [PassportAuthController::class, 'userDetail']);
     Route::post('logout', [PassportAuthController::class, 'logout']);
 
-    Route::resource('/article', ArticleController::class)->except(['create', 'edit']);
-    Route::resource('/category', CategoryController::class)->except(['create', 'edit']);
+    Route::apiResource('article', ArticleController::class)->except(['create', 'edit']);
+    Route::apiResource('category', CategoryController::class)->except(['create', 'edit']);
 });
