@@ -21,10 +21,11 @@ Route::post('register', [PassportAuthController::class, 'register']);
 Route::post('login', [PassportAuthController::class, 'login']);
 
 // put all api protected routes here
-Route::middleware('auth:api')->group(function () {
+Route::group(['prefix' => 'v1', 'middleware' => 'auth:api'], function() {
+
     Route::post('user-detail', [PassportAuthController::class, 'userDetail']);
     Route::post('logout', [PassportAuthController::class, 'logout']);
 
     Route::apiResource('article', ArticleController::class)->except(['create', 'edit']);
-    Route::apiResource('category', CategoryController::class)->except(['create', 'edit']);
-});
+    Route::apiResource('category', CategoryController::class)->except(['create', 'edit']);});
+
